@@ -14,7 +14,7 @@ import joblib
 from utils import clean_tweet
 
 # config
-DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'emotion_dataset.csv')
+DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'emotion_dataset.csv')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'outputs')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 RANDOM_STATE = 42
