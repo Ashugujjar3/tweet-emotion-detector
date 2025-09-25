@@ -1,41 +1,58 @@
 ```markdown
-# Document Similarity Finder — Run Report
+# Tweet Emotion Detector — Run Report
 
 ## Date:
 YYYY-MM-DD
 
-## Corpus
-- Folder: `data/docs/`
-- # documents: 
-- Filenames:
+## Dataset
+- Filename: `data/emotion_dataset.csv`
+- # rows: 
+- Column names used: text = `...`, label = `...`
+- Label mapping performed (if any): e.g., joy -> happy, sadness -> sad
 
 ## Environment
-- Python version:
-- Packages (from `pip freeze`):
+- Python version: 
+- Packages (from `pip freeze`): 
 
-## Vectorizer & parameters
-- TF-IDF params: stop_words='english', max_features=..., ngram_range=(..., ...)
+## Model(s) run
+- Vectorizer: `TfidfVectorizer` (params: max_features=..., ngram_range=...)
+- Classifiers: LogisticRegression / MultinomialNB
+- Random seed: 42
 
-## Results
-### Top similar pairs (from `outputs/top_pairs.csv`)
-| rank | docA | docB | cosine |
-|------|------|------:|------:|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
+## Results (fill after run)
+### Logistic Regression
+- Test accuracy: 
+- Precision (macro):
+- Recall (macro):
+- F1 (macro):
 
-### Similarity heatmap
-- File: `outputs/similarity_matrix.png`
+### MultinomialNB
+- Test accuracy: 
+- Precision (macro):
+- Recall (macro):
+- F1 (macro):
 
-### Top TF-IDF terms for top pair
-- File: `outputs/top_terms_top_pair.json`
-- Short summary of why these two documents are similar:
+### Selected best model
+- Model name:
+- Reason for selection:
 
-## Observations
-- Patterns found:
-- Any duplicates or near-duplicates:
-- Recommendations (e.g., use embeddings for semantic similarity):
+## Confusion matrix
+- File: `outputs/confusion_matrix.png`
+
+## Classification report
+- File: `outputs/classification_report.csv` (or paste key rows here)
+
+## Example misclassifications (paste 5)
+| text | true | pred |
+|------|------|------|
+| ...  | ...  | ...  |
+
+## Observations & notes
+- Common confusions:
+- Data quality issues:
+- Ideas to improve (e.g., more data, transformer embeddings, data augmentation):
 
 ## Next steps
-- Try sentence/paragraph embeddings (SBERT) for semantic similarity.
-- Cluster documents using hierarchical or KMeans on vectors.
+- (e.g.) Run GridSearchCV for LR `C` param
+- Try transformer embeddings (HuggingFace)
+- Add a simple web UI (Streamlit)
