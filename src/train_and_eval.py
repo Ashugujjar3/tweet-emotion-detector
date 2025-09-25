@@ -1,8 +1,5 @@
-# src/train_and_eval.py
-# %% [markdown]
-# Tweet Emotion Detector - full pipeline
+# Tweet Emotion Detector
 
-# %%
 import os
 import pandas as pd
 import numpy as np
@@ -16,13 +13,13 @@ import matplotlib.pyplot as plt
 import joblib
 from utils import clean_tweet
 
-# %% config
+# config
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'emotion_dataset.csv')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'outputs')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 RANDOM_STATE = 42
 
-# %% load data
+# load data
 print("Loading data from:", DATA_PATH)
 df = pd.read_csv(DATA_PATH)
 
@@ -63,21 +60,21 @@ df['label'] = df['label'].map(label_map)
 print("Remapped label distribution:")
 print(df['label'].value_counts())
 
-# %% preprocess
+#  preprocess
 df['clean_text'] = df['text'].astype(str).apply(lambda x: clean_tweet(x))
 df = df[df['clean_text'].str.strip() != ""]  # drop empty after cleaning
 X = df['clean_text'].values
 y = df['label'].values
 
-# %% split
+#  split
 X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=RANDOM_STATE)
 
-# %% vectorize
+# vectorize
 vectorizer = TfidfVectorizer(max_features=10000, ngram_range=(1,2))
 X_train_vec = vectorizer.fit_transform(X_train)
 X_test_vec = vectorizer.transform(X_test)
 
-# %% train models
+# train models
 lr = LogisticRegression(max_iter=1000, random_state=RANDOM_STATE)
 nb = MultinomialNB()
 
@@ -86,7 +83,7 @@ lr.fit(X_train_vec, y_train)
 print("Training MultinomialNB...")
 nb.fit(X_train_vec, y_train)
 
-# %% evaluate helper
+# evaluate helper
 def evaluate_model(model, X_test_vec, y_test, name="model"):
     preds = model.predict(X_test_vec)
     acc = accuracy_score(y_test, preds)
@@ -99,12 +96,12 @@ def evaluate_model(model, X_test_vec, y_test, name="model"):
 cm_lr, acc_lr, preds_lr = evaluate_model(lr, X_test_vec, y_test, name='Logistic Regression')
 cm_nb, acc_nb, preds_nb = evaluate_model(nb, X_test_vec, y_test, name='MultinomialNB')
 
-# %% choose best model by accuracy
+# choose best model by accuracy
 best_model = lr if acc_lr >= acc_nb else nb
 best_name = 'Logistic Regression' if best_model is lr else 'MultinomialNB'
 print("Selected best model:", best_name)
 
-# %% plot confusion matrix heatmap for best model
+# plot confusion matrix heatmap for best model
 cm = cm_lr if best_model is lr else cm_nb
 labels = ['happy','sad','angry','neutral']
 plt.figure(figsize=(6,5))
@@ -117,11 +114,11 @@ outpath = os.path.join(OUTPUT_DIR, 'confusion_matrix.png')
 plt.savefig(outpath, dpi=150)
 print("Saved confusion matrix to", outpath)
 
-# %% save model and vectorizer
+# save model and vectorizer
 joblib.dump({'model': best_model, 'vectorizer': vectorizer}, os.path.join(OUTPUT_DIR, 'model.joblib'))
 print("Saved model and vectorizer.")
 
-# %% inspect some misclassifications (optional)
+# inspect some misclassifications (optional)
 def show_misclassified(X_test, y_test, preds, n=10):
     dfm = pd.DataFrame({'text': X_test, 'true': y_test, 'pred': preds})
     mis = dfm[dfm['true'] != dfm['pred']].sample(frac=1, random_state=RANDOM_STATE).head(n)
